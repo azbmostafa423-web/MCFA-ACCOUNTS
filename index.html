@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCFA Accounts ⚡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .glow-center {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 255, 0, 0.15) 0%, rgba(0, 255, 0, 0.05) 30%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        .title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.5), 0 0 40px rgba(0, 255, 0, 0.3), 0 0 80px rgba(0, 255, 0, 0.1);
+            margin-bottom: 60px;
+            animation: floatTitle 3s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+
+        @keyframes floatTitle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .claim-btn {
+            background: linear-gradient(135deg, #00d924 0%, #00ff00 50%, #00d924 100%);
+            color: #000;
+            font-size: 2rem;
+            font-weight: 900;
+            padding: 25px 60px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4), 0 0 60px rgba(0, 255, 0, 0.2), inset 0 2px 0 rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: pulseBtn 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 255, 0, 0.4), 0 0 60px rgba(0, 255, 0, 0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(0, 255, 0, 0.6), 0 0 100px rgba(0, 255, 0, 0.3); }
+        }
+
+        .claim-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 0 60px rgba(0, 255, 0, 0.8), 0 0 120px rgba(0, 255, 0, 0.4);
+        }
+
+        .claim-btn:active {
+            transform: scale(0.95);
+        }
+
+        .claim-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .account-display {
+            display: none;
+            margin-top: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .account-display.active {
+            display: block;
+        }
+
+        .account-info {
+            color: #00ff00;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .account-info label {
+            color: #888;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .account-info .value {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #00d924, #00ff00);
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #444, #666);
+            color: #fff;
+        }
+
+        .admin-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .admin-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            color: #888;
+            border: 1px solid #333;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .admin-toggle:hover {
+            color: #00ff00;
+            border-color: #00ff00;
+        }
+
+        .admin-content {
+            display: none;
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            width: 400px;
+            max-height: 500px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .admin-content h3 {
+            color: #00ff00;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .admin-content textarea {
+            width: 100%;
+            height: 150px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #00ff00;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: none;
+            margin-bottom: 10px;
+        }
+
+        .admin-content textarea::placeholder {
+            color: #555;
+        }
+
+        .admin-btn {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+        }
+
+        .stats {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff00;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float 10s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .empty-msg {
+            color: #ff4444;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .empty-msg.active {
+            display: block;
+        }
+
+        .counters-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            gap: 15px;
+            animation: fadeInUp 1s ease-out;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .counter-box {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid;
+            border-radius: 15px;
+            padding: 15px 25px;
+            text-align: center;
+            min-width: 160px;
+            transition: all 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .counter-box .label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .counter-box .number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .counter-box.available {
+            border-color: #00ff00;
+            color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .counter-box.claimed {
+            border-color: #00aaff;
+            color: #00aaff;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+        }
+
+        .counter-box.total {
+            border-color: #ffaa00;
+            color: #ffaa00;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+        }
+
+        .counter-box.available.warning {
+            border-color: #ffaa00;
+            color: #ffaa00;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+        }
+
+        .counter-box.available.empty {
+            border-color: #ff4444;
+            color: #ff4444;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .counters-bar {
+                flex-direction: column;
+                gap: 10px;
+                bottom: 15px;
+            }
+            .counter-box {
+                min-width: 140px;
+                padding: 10px 20px;
+            }
+            .counter-box .number {
+                font-size: 1.4rem;
+            }
+            .title {
+                font-size: 2.5rem;
+            }
+            .claim-btn {
+                font-size: 1.4rem;
+                padding: 18px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-center"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <h1 class="title">MCFA ACCOUNTS ⚡</h1>
+        
+        <button class="claim-btn" onclick="claimAccount()">Claim MCFA Account 💎</button>
+        
+        <div class="account-display" id="accountDisplay">
+            <div class="account-info">
+                <label>Email:</label>
+                <div class="value" id="emailValue">test@gmail.com</div>
+            </div>
+            <div class="account-info">
+                <label>Password:</label>
+                <div class="value" id="passwordValue">pass</div>
+            </div>
+            <button class="copy-btn" id="copyBtn" onclick="copyAccount()">📋 Copy Account</button>
+        </div>
+        
+        <div class="empty-msg" id="emptyMsg">❌ No accounts available! Add accounts in admin panel.</div>
+    </div>
+
+    <div class="counters-bar" id="countersBar">
+        <div class="counter-box available" id="availableBox">
+            <div class="label">🟢 Available</div>
+            <div class="number" id="availableCount">1</div>
+        </div>
+        <div class="counter-box claimed" id="claimedBox">
+            <div class="label">🔵 Claimed</div>
+            <div class="number" id="claimedCountDisplay">0</div>
+        </div>
+        <div class="counter-box total" id="totalBox">
+            <div class="label">🟡 Total</div>
+            <div class="number" id="totalCount">1</div>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <button class="admin-toggle" onclick="toggleAdmin()">⚙️ Admin</button>
+        <div class="admin-content" id="adminContent">
+            <h3>🛠️ Manage Accounts</h3>
+            <textarea id="bulkInput" placeholder="Paste accounts in format:&#10;email:pass&#10;email:pass&#10;email:pass"></textarea>
+            <div>
+                <button class="admin-btn" onclick="addAccounts()">➕ Add Accounts</button>
+                <button class="admin-btn" style="background: #ff4444;" onclick="clearAccounts()">🗑️ Clear All</button>
+            </div>
+            <div class="stats" id="stats">Accounts: 0 | Claimed: 0</div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize accounts storage
+        let accounts = JSON.parse(localStorage.getItem('mfa_accounts')) || [
+            { email: 'test@gmail.com', password: 'pass', claimed: false }
+        ];
+        let claimedCount = parseInt(localStorage.getItem('mfa_claimed')) || 0;
+
+        // Save to localStorage
+        function saveAccounts() {
+            localStorage.setItem('mfa_accounts', JSON.stringify(accounts));
+            localStorage.setItem('mfa_claimed', claimedCount.toString());
+            updateStats();
+        }
+
+        // Update stats display
+        function updateStats() {
+            const total = accounts.length;
+            const available = accounts.filter(a => !a.claimed).length;
+            
+            // Update admin stats
+            document.getElementById('stats').textContent = `Accounts: ${total} | Claimed: ${claimedCount}`;
+            
+            // Update counter numbers
+            document.getElementById('availableCount').textContent = available;
+            document.getElementById('claimedCountDisplay').textContent = claimedCount;
+            document.getElementById('totalCount').textContent = total;
+            
+            // Update available box color based on count
+            const availableBox = document.getElementById('availableBox');
+            availableBox.classList.remove('warning', 'empty');
+            if (available === 0) {
+                availableBox.classList.add('empty');
+            } else if (available <= 3) {
+                availableBox.classList.add('warning');
+            }
+        }
+
+        // Claim an account
+        function claimAccount() {
+            const display = document.getElementById('accountDisplay');
+            const emptyMsg = document.getElementById('emptyMsg');
+            
+            // Find first unclaimed account
+            const unclaimed = accounts.find(a => !a.claimed);
+            
+            if (!unclaimed) {
+                display.classList.remove('active');
+                emptyMsg.classList.add('active');
+                setTimeout(() => emptyMsg.classList.remove('active'), 3000);
+                return;
+            }
+            
+            // Mark as claimed
+            unclaimed.claimed = true;
+            claimedCount++;
+            saveAccounts();
+            
+            // Display account
+            document.getElementById('emailValue').textContent = unclaimed.email;
+            document.getElementById('passwordValue').textContent = unclaimed.password;
+            
+            emptyMsg.classList.remove('active');
+            display.classList.add('active');
+            
+            // Reset copy button
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.textContent = '📋 Copy Account';
+            copyBtn.classList.remove('copied');
+        }
+
+        // Copy account to clipboard
+        function copyAccount() {
+            const email = document.getElementById('emailValue').textContent;
+            const password = document.getElementById('passwordValue').textContent;
+            const text = `Email: ${email}\nPassword: ${password}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const copyBtn = document.getElementById('copyBtn');
+                copyBtn.textContent = '✅ Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy Account';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Toggle admin panel
+        function toggleAdmin() {
+            document.getElementById('adminContent').classList.toggle('active');
+        }
+
+        // Add bulk accounts
+        function addAccounts() {
+            const input = document.getElementById('bulkInput').value.trim();
+            if (!input) return;
+            
+            const lines = input.split('\n');
+            let added = 0;
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                
+                // Support multiple formats: email:pass, email|pass, email pass
+                let parts;
+                if (line.includes(':')) {
+                    parts = line.split(':');
+                } else if (line.includes('|')) {
+                    parts = line.split('|');
+                } else {
+                    parts = line.split(/\s+/);
+                }
+                
+                if (parts.length >= 2) {
+                    const email = parts[0].trim();
+                    const password = parts[1].trim();
+                    
+                    if (email && password) {
+                        accounts.push({ email, password, claimed: false });
+                        added++;
+                    }
+                }
+            });
+            
+            if (added > 0) {
+                saveAccounts();
+                document.getElementById('bulkInput').value = '';
+                alert(`✅ Added ${added} accounts!`);
+            }
+        }
+
+        // Clear all accounts
+        function clearAccounts() {
+            if (confirm('Are you sure you want to clear all accounts?')) {
+                accounts = [];
+                claimedCount = 0;
+                saveAccounts();
+                document.getElementById('accountDisplay').classList.remove('active');
+            }
+        }
+
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (5 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialize
+        createParticles();
+        updateStats();
+
+        // Close admin when clicking outside
+        document.addEventListener('click', (e) => {
+            const adminPanel = document.querySelector('.admin-panel');
+            if (!adminPanel.contains(e.target)) {
+                document.getElementById('adminContent').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
